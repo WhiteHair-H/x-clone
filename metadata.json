@@ -1,0 +1,5 @@
+{
+  "name": "X Clone",
+  "description": "A high-fidelity Twitter (X) clone built with React, Tailwind CSS, and shadcn/ui.",
+  "requestFramePermissions": []
+}
