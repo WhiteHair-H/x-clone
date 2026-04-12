@@ -21,7 +21,7 @@ dnf install -y nodejs git
 dnf install -y postgresql15-server postgresql15
 /usr/bin/postgresql-setup --initdb
 
-# Allow password auth for TCP connections (keep peer for local socket)
+# Allow password auth for TCP connections
 sed -i 's/ident$/md5/' /var/lib/pgsql/data/pg_hba.conf
 
 systemctl start postgresql
@@ -47,16 +47,15 @@ npm install -g pm2 tsx
 # -------------------------------------------------------
 APP_DIR=/home/ec2-user/x-clone
 
-# ★ 아래 URL을 본인의 GitHub 레포 주소로 변경하세요
-git clone https://github.com/<YOUR_GITHUB_USERNAME>/x-clone.git "$APP_DIR"
+# ★★★ IMPORTANT: Change to your GitHub username
+git clone https://github.com/WhiteHair-H/x-clone.git "$APP_DIR"
 cd "$APP_DIR"
 
 npm install
 
-# Create .env
+# Create .env (NODE_ENV should NOT be in .env for Vite, only for runtime)
 cat > .env << 'EOF'
 DATABASE_URL=postgresql://xclone:xclone123@localhost:5432/xclone
-NODE_ENV=production
 PORT=3000
 EOF
 
@@ -95,10 +94,10 @@ server {
 }
 NGINX
 
-# Remove default config if it conflicts
+# Remove default config
 rm -f /etc/nginx/conf.d/default.conf
 
 systemctl start nginx
 
 echo "=== X-Clone deployment complete ==="
-echo "Access your app at http://<EC2_PUBLIC_IP>"
+echo "App will be available at http://<EC2_PUBLIC_IP>"
