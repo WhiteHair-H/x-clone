@@ -4,6 +4,11 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { initDB, getTweets, createTweet, deleteTweet } from "./db.ts";
 
+// 프로덕션 환경 설정
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = "production";
+}
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -49,11 +54,19 @@ app.delete("/api/tweets/:id", async (req, res) => {
 
 // --- Serve frontend in production ---
 
+const distPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../dist");
+
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`Serving from: ${distPath}`);
+
 if (process.env.NODE_ENV === "production") {
-  const distPath = path.join(__dirname, "../dist");
   app.use(express.static(distPath));
   app.get("*", (_req, res) => {
     res.sendFile(path.join(distPath, "index.html"));
+  });
+} else {
+  app.get("/", (_req, res) => {
+    res.json({ message: "API running. Frontend available at /api/tweets" });
   });
 }
 
